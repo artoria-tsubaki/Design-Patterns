@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <!-- <div style="position: absolute;background: blue;" id="div">我是 div</div> -->
+    <form action="" id="registerForm" method="post">
+        请输入用户名： <input type="text" id="username" name="username">
+        请输入密码： <input type="text" id="password" name="password">
+        请输入手机号码： <input type="text" id="tel" name="tel">
+        <button type="submit">提交</button>
+    </form>
+    <script src="./index.js"></script>
+
+    <script>
+        // var registerForm = document.getElementById('registerForm')
+        // registerForm.onsubmit = function() {
+        //     if(registerForm.username.value === '') {
+        //         alert('用户名不能为空')
+        //         return false
+        //     }
+        //     if(registerForm.password.value.length < 6) {
+        //         alert('密码长度不能小于6')
+        //         return false
+        //     }
+        //     if(!/(^1[3|5|8][0-9]{9})/.test(registerForm.tel.value)) {
+        //         alert('手机号码格式不正确')
+        //         return false
+        //     }
+        //     return false
+        // }
+
+        var strategies = {
+            isNonEmpty: function (value, errorMsg) {
+                if(value === '') {
+                    return errorMsg
+                }
+            },
+            isOverMinLength: function(value, min, errorMsg) {
+                if(value.length < min) {
+                    return errorMsg
+                }
+            },
+            isMobile: function(value, errorMsg) {
+                if(!/(^1[3|5|8][0-9]{9})/.test(value)) {
+                    return errorMsg
+                }
+            }
+        }
+
+        var validatorFunc = function() {
+            var validator = new Validator()
+
+            // 添加校验规则
+            validator.add(registerForm.username, [{
+                strategy: 'isNonEmpty', 
+                errorMsg: '用户名不能为空'
+            }, {
+                strategy: 'isOverMinLength:6',
+                errorMsg: '用户名长度不能小于6'
+            }])
+            // validator.add(registerForm.password, 'isOverMinLength:6', '密码长度不能小于6')
+            // validator.add(registerForm.tel, 'isMobile', '手机号码格式不正确')
+
+            var errorMsg = validator.start()
+            return errorMsg
+        }
+
+        var registerForm = document.getElementById('registerForm')
+        registerForm.onsubmit = function() {
+            var msg = validatorFunc()
+            if(msg) {
+                alert(msg)
+                return false;
+            }
+        }
+
+        var Validator = function() {
+            this.cache = []
+        }
+
+        Validator.prototype.add = function(dom, rules) {
+            var self = this
+            for(let i = 0, rule; rule = rules[i++];) {
+                (function(rule) {
+                    var strategyAry = rule.strategy.split(':')
+                    var errorMsg = rule.errorMsg
+
+                    self.cache.push(function() {
+                        var strategy = strategyAry.shift()
+                        strategyAry.unshift(dom.value)
+                        strategyAry.push(errorMsg)
+                        return strategies[strategy].apply(dom, strategyAry)
+                    })
+                })(rule)
+            }
+        }
+
+        Validator.prototype.start = function() {
+            for(var i = 0, validatorFunc; validatorFunc = this.cache[i++];) {
+                var msg = validatorFunc()
+                if(msg) {
+                    return msg
+                }
+            }
+        }
+
+        // var div = document.querySelector('#div')
+        // var animate = new Animate(div)
+        // console.log(div);
+        // console.log(animate);
+        // animate.start('left', 500, 1000, 'strongEaseOut')
+    </script>
+</body>
+</html>

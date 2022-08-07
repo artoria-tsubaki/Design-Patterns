@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button id="btn">click me</button>
+    <!-- <script src="./index.js"></script> -->
+    <script>
+        // 在要被使用的时候才去创建这个对象
+        // 通用的惰性单例
+        var getSingle = function(fn) {
+            var result
+            return function() {
+                return result || (result = fn.apply(this, arguments))
+            }
+        }
+
+        // 使用惰性单例实现插入div
+        // function createDiv() {
+        //     var div = document.createElement('div')
+        //     div.innerHTML = '我是一个div'
+        //     document.body.appendChild(div)
+        //     div.style.display = 'none'
+        //     return div
+        // }
+
+        // var createSingleDiv = getSingle(createDiv)
+
+        // document.querySelector('#btn').addEventListener('click', (e) => {
+        //     var div = createSingleDiv()
+        //     div.style.display = 'block'
+        // })
+
+        // 使用惰性单例实现事件仅限一次绑定
+        var bindEvent = getSingle(function () {
+            console.log('执行内部函数')
+            document.querySelector("#btn").addEventListener("click" , (e) => {
+                console.log(e);
+            })
+            return true
+        })
+
+        var render = function () {
+            bindEvent()
+            console.log('开始渲染')
+        }
+
+        render()
+        render()
+        render()
+    </script>
+</body>
+</html>
