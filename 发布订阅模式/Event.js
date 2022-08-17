@@ -23,7 +23,6 @@ var Event = (function() {
       };
     
     _listen = function (key, fn, cache) {
-      console.log("listen", key, fn, cache)
       if (!cache[key]) {
         cache[key] = []
       }
@@ -52,7 +51,6 @@ var Event = (function() {
       ret,
       stack = cache[key];
       
-      console.log("trigger", key, args, cache, stack);
       if (!stack || stack.length === 0) {
         return false
       } else {
@@ -134,6 +132,7 @@ var Event = (function() {
 
   return Event
 })()
+
 Event.trigger("sayHello", 'artoria')
 
 Event.listen("sayHello", function (user) {
