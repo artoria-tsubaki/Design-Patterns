@@ -27,7 +27,6 @@ var Beverage = function (param) {
     var temp2 = await brew()
     var temp3 = await pourInCup()
     var temp4 = await addCondiments()
-    console.log(temp1, temp2, temp3, temp4)
   }
 
   return F
